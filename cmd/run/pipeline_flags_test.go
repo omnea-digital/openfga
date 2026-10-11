@@ -43,6 +43,7 @@ func TestListObjectsPipelineKnobs(t *testing.T) {
 		require.Equal(t, 100, cfg.ListObjectsPipelineChunkSize)
 		require.Equal(t, 128, cfg.ListObjectsPipelineBufferCapacity)
 		require.Equal(t, 3, cfg.ListObjectsPipelineNumProcs)
+		require.Equal(t, 0, cfg.ListObjectsPipelineMaxBatch)
 
 		_, basepath, _, _ := runtime.Caller(0)
 		schema, err := os.ReadFile(path.Join(filepath.Dir(basepath), "..", "..", ".config-schema.json"))
@@ -52,6 +53,7 @@ func TestListObjectsPipelineKnobs(t *testing.T) {
 			"listObjectsPipelineChunkSize":      cfg.ListObjectsPipelineChunkSize,
 			"listObjectsPipelineBufferCapacity": cfg.ListObjectsPipelineBufferCapacity,
 			"listObjectsPipelineNumProcs":       cfg.ListObjectsPipelineNumProcs,
+			"listObjectsPipelineMaxBatch":       cfg.ListObjectsPipelineMaxBatch,
 		} {
 			val := res.Get("properties." + key + ".default")
 			require.True(t, val.Exists(), key)
@@ -64,20 +66,24 @@ func TestListObjectsPipelineKnobs(t *testing.T) {
 			"--listObjects-pipeline-chunk-size", "1000",
 			"--listObjects-pipeline-buffer-capacity", "16",
 			"--listObjects-pipeline-num-procs", "8",
+			"--listObjects-pipeline-max-batch", "2000",
 		)
 		require.Equal(t, 1000, cfg.ListObjectsPipelineChunkSize)
 		require.Equal(t, 16, cfg.ListObjectsPipelineBufferCapacity)
 		require.Equal(t, 8, cfg.ListObjectsPipelineNumProcs)
+		require.Equal(t, 2000, cfg.ListObjectsPipelineMaxBatch)
 	})
 
 	t.Run("env", func(t *testing.T) {
 		t.Setenv("OPENFGA_LIST_OBJECTS_PIPELINE_CHUNK_SIZE", "500")
 		t.Setenv("OPENFGA_LIST_OBJECTS_PIPELINE_BUFFER_CAPACITY", "32")
 		t.Setenv("OPENFGA_LIST_OBJECTS_PIPELINE_NUM_PROCS", "4")
+		t.Setenv("OPENFGA_LIST_OBJECTS_PIPELINE_MAX_BATCH", "1000")
 		cfg := parsePipelineConfig(t)
 		require.Equal(t, 500, cfg.ListObjectsPipelineChunkSize)
 		require.Equal(t, 32, cfg.ListObjectsPipelineBufferCapacity)
 		require.Equal(t, 4, cfg.ListObjectsPipelineNumProcs)
+		require.Equal(t, 1000, cfg.ListObjectsPipelineMaxBatch)
 	})
 
 	t.Run("invalid_values_are_rejected", func(t *testing.T) {
@@ -85,6 +91,7 @@ func TestListObjectsPipelineKnobs(t *testing.T) {
 			func(c *serverconfig.Config) { c.ListObjectsPipelineChunkSize = 0 },
 			func(c *serverconfig.Config) { c.ListObjectsPipelineNumProcs = 0 },
 			func(c *serverconfig.Config) { c.ListObjectsPipelineBufferCapacity = -1 },
+			func(c *serverconfig.Config) { c.ListObjectsPipelineMaxBatch = -1 },
 		} {
 			cfg := serverconfig.DefaultConfig()
 			mutate(cfg)

@@ -36,6 +36,15 @@ func WithNumProcs(num int) Option {
 	}
 }
 
+// WithMaxBatch sets the maximum number of values a worker merges into one
+// datastore read when several messages are already queued on the same edge.
+// A value of 0 disables merging; each message is then read on its own.
+func WithMaxBatch(size int) Option {
+	return func(config *Config) {
+		config.MaxBatch = size
+	}
+}
+
 // WithFlags sets provided flags.
 func WithFlags(flags Flag) Option {
 	return func(config *Config) {
@@ -55,6 +64,7 @@ type Config struct {
 	BufferCapacity int
 	ChunkSize      int
 	NumProcs       int
+	MaxBatch       int
 	Flags          Flag
 }
 
@@ -79,6 +89,10 @@ func (config *Config) Validate() error {
 
 	if config.NumProcs < 1 {
 		return ErrInvalidNumProcs
+	}
+
+	if config.MaxBatch < 0 {
+		return ErrInvalidMaxBatch
 	}
 	return nil
 }

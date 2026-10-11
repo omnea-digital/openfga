@@ -862,6 +862,15 @@ func WithListObjectsNumProcs(value int) OpenFGAServiceV1Option {
 	}
 }
 
+// WithListObjectsMaxBatch is only effective when the ListObjects "pipeline" algorithm is
+// enabled. When positive, a worker merges messages that are already queued on an edge into
+// one datastore read of up to this many objects. 0 disables merging.
+func WithListObjectsMaxBatch(value int) OpenFGAServiceV1Option {
+	return func(s *Server) {
+		s.listObjectsPipelineConfig.MaxBatch = value
+	}
+}
+
 func WithCheckCache(c storage.InMemoryCache[any]) OpenFGAServiceV1Option {
 	return func(s *Server) {
 		s.sharedResourceOptions = append(s.sharedResourceOptions, shared.WithCheckCache(c))

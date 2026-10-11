@@ -102,6 +102,7 @@ func (s *Server) ListObjects(ctx context.Context, req *openfgav1.ListObjectsRequ
 		commands.WithListObjectsChunkSize(s.listObjectsPipelineConfig.ChunkSize),
 		commands.WithListObjectsBufferCapacity(s.listObjectsPipelineConfig.BufferCapacity),
 		commands.WithListObjectsNumProcs(s.listObjectsPipelineConfig.NumProcs),
+		commands.WithListObjectsMaxBatch(s.listObjectsPipelineConfig.MaxBatch),
 		commands.WithFeatureFlagClient(s.featureFlagClient),
 	)
 	if err != nil {
@@ -277,6 +278,7 @@ func (s *Server) StreamedListObjects(req *openfgav1.StreamedListObjectsRequest, 
 		commands.WithListObjectsChunkSize(s.listObjectsPipelineConfig.ChunkSize),
 		commands.WithListObjectsBufferCapacity(s.listObjectsPipelineConfig.BufferCapacity),
 		commands.WithListObjectsNumProcs(s.listObjectsPipelineConfig.NumProcs),
+		commands.WithListObjectsMaxBatch(s.listObjectsPipelineConfig.MaxBatch),
 		commands.WithFeatureFlagClient(s.featureFlagClient),
 	)
 	if err != nil {

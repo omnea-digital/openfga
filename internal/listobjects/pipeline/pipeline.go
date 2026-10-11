@@ -67,6 +67,7 @@ var (
 	ErrInvalidBufferCapacity = errors.New("buffer capacity must be a positive number")
 	ErrInvalidChunkSize      = errors.New("chunk size must be greater than zero")
 	ErrInvalidNumProcs       = errors.New("process number must be greater than zero")
+	ErrInvalidMaxBatch       = errors.New("max batch must not be negative")
 	ErrInvalidObject         = errors.New("invalid object")
 	ErrInvalidSubject        = errors.New("invalid subject")
 	ErrUnreachable           = errors.New("no path exists")
@@ -290,6 +291,7 @@ func (b *Builder) Build(
 		attribute.Int("buffer_capacity", config.BufferCapacity),
 		attribute.Int("chunk_size", config.ChunkSize),
 		attribute.Int("num_procs", config.NumProcs),
+		attribute.Int("max_batch", config.MaxBatch),
 	))
 	defer span.End()
 
@@ -301,6 +303,7 @@ func (b *Builder) Build(
 	core.Errors = errs
 	core.ChunkSize = config.ChunkSize
 	core.NumProcs = config.NumProcs
+	core.MaxBatch = config.MaxBatch
 	core.Pool = new(worker.MessagePool)
 
 	workers := make(map[string]worker.Worker)

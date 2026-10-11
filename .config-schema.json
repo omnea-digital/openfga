@@ -115,6 +115,13 @@
             "default": 3,
             "x-env-variable": "OPENFGA_LIST_OBJECTS_PIPELINE_NUM_PROCS"
         },
+        "listObjectsPipelineMaxBatch": {
+            "description": "When positive, a ListObjects pipeline edge merges messages that are already queued into one datastore read of up to this many ids. 0 disables merging.",
+            "type": "integer",
+            "minimum": 0,
+            "default": 0,
+            "x-env-variable": "OPENFGA_LIST_OBJECTS_PIPELINE_MAX_BATCH"
+        },
         "listUsersDeadline": {
             "description": "The timeout deadline for serving ListUsers requests. If 0s, there is no deadline",
             "type": "string",

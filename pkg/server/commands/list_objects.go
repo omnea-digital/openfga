@@ -225,6 +225,12 @@ func WithListObjectsNumProcs(value int) ListObjectsQueryOption {
 	}
 }
 
+func WithListObjectsMaxBatch(value int) ListObjectsQueryOption {
+	return func(d *ListObjectsQuery) {
+		d.pipelineConfig.MaxBatch = value
+	}
+}
+
 func NewListObjectsQuery(
 	ds storage.RelationshipTupleReader,
 	checkResolver graph.CheckResolver,

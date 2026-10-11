@@ -180,7 +180,10 @@ type Core struct {
 	Interpreter Interpreter
 	ChunkSize   int
 	NumProcs    int
-	Pool        *MessagePool
+	// MaxBatch, when positive, merges messages already queued on a sender
+	// into one message of at most MaxBatch values before processing.
+	MaxBatch int
+	Pool     *MessagePool
 }
 
 func (c *Core) instrument(span trace.Span) {
@@ -298,9 +301,12 @@ func (c *Core) ProcessSender(ctx context.Context, index int, processor MessagePr
 		})
 	}
 
+	batches := newCoalescer(sender, c.MaxBatch)
+	defer batches.Release()
+
 MessageLoop:
 	for {
-		msg, ok := sender.Recv(ctx)
+		msg, ok := batches.Recv(ctx)
 		if !ok {
 			break
 		}

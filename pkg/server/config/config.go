@@ -56,6 +56,7 @@ const (
 	DefaultListObjectsPipelineChunkSize      = 100
 	DefaultListObjectsPipelineBufferCapacity = 128
 	DefaultListObjectsPipelineNumProcs       = 3
+	DefaultListObjectsPipelineMaxBatch       = 0
 	DefaultListObjectsOptimizationsEnabled   = false
 
 	DefaultCacheControllerConfigEnabled = false
@@ -393,6 +394,11 @@ type Config struct {
 	ListObjectsPipelineBufferCapacity int
 	ListObjectsPipelineNumProcs       int
 
+	// ListObjectsPipelineMaxBatch, when positive, lets a pipeline edge merge messages
+	// that are already queued into one datastore read of up to this many ids.
+	// 0 disables merging.
+	ListObjectsPipelineMaxBatch int
+
 	// ListUsersDeadline defines the maximum amount of time to accumulate ListUsers results
 	// before the server will respond. This is to protect the server from misuse of the
 	// ListUsers endpoints. It cannot be larger than the configured server's request timeout (RequestTimeout or HTTPConfig.UpstreamTimeout).
@@ -558,8 +564,8 @@ func (cfg *Config) VerifyServerSettings() error {
 	}
 
 	if cfg.ListObjectsPipelineChunkSize < 1 || cfg.ListObjectsPipelineNumProcs < 1 ||
-		cfg.ListObjectsPipelineBufferCapacity < 0 {
-		return errors.New("listObjectsPipelineChunkSize and listObjectsPipelineNumProcs must be positive; listObjectsPipelineBufferCapacity must be non-negative")
+		cfg.ListObjectsPipelineBufferCapacity < 0 || cfg.ListObjectsPipelineMaxBatch < 0 {
+		return errors.New("listObjectsPipelineChunkSize and listObjectsPipelineNumProcs must be positive; listObjectsPipelineBufferCapacity and listObjectsPipelineMaxBatch must be non-negative")
 	}
 
 	if cfg.MaxConditionEvaluationCost < 100 {
@@ -892,6 +898,7 @@ func DefaultConfig() *Config {
 		ListObjectsPipelineChunkSize:              DefaultListObjectsPipelineChunkSize,
 		ListObjectsPipelineBufferCapacity:         DefaultListObjectsPipelineBufferCapacity,
 		ListObjectsPipelineNumProcs:               DefaultListObjectsPipelineNumProcs,
+		ListObjectsPipelineMaxBatch:               DefaultListObjectsPipelineMaxBatch,
 		ListUsersMaxResults:                       DefaultListUsersMaxResults,
 		ListUsersDeadline:                         DefaultListUsersDeadline,
 		ReadChangesMaxPageSize:                    DefaultReadChangesMaxPageSize,

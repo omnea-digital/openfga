@@ -309,6 +309,8 @@ func NewRunCommand() *cobra.Command {
 
 	flags.Int("listObjects-pipeline-num-procs", defaultConfig.ListObjectsPipelineNumProcs, "the number of goroutines processing each edge of the ListObjects pipeline")
 
+	flags.Int("listObjects-pipeline-max-batch", defaultConfig.ListObjectsPipelineMaxBatch, "when positive, a ListObjects pipeline edge merges messages that are already queued into one datastore read of up to this many ids. 0 disables merging")
+
 	flags.Duration("listUsers-deadline", defaultConfig.ListUsersDeadline, "the timeout deadline for serving ListUsers requests. If 0, there is no deadline")
 
 	flags.Uint32("listUsers-max-results", defaultConfig.ListUsersMaxResults, "the maximum results to return in ListUsers API responses. If 0, all results can be returned")
@@ -1082,6 +1084,7 @@ func (s *ServerContext) Run(ctx context.Context, config *serverconfig.Config) er
 		server.WithListObjectsChunkSize(config.ListObjectsPipelineChunkSize),
 		server.WithListObjectsBufferCapacity(config.ListObjectsPipelineBufferCapacity),
 		server.WithListObjectsNumProcs(config.ListObjectsPipelineNumProcs),
+		server.WithListObjectsMaxBatch(config.ListObjectsPipelineMaxBatch),
 		server.WithListUsersDeadline(config.ListUsersDeadline),
 		server.WithListUsersMaxResults(config.ListUsersMaxResults),
 		server.WithMaxConcurrentReadsForListObjects(config.MaxConcurrentReadsForListObjects),

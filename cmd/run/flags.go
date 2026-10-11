@@ -248,6 +248,9 @@ func bindRunFlagsFunc(flags *pflag.FlagSet) func(*cobra.Command, []string) {
 		util.MustBindPFlag("listObjectsPipelineNumProcs", flags.Lookup("listObjects-pipeline-num-procs"))
 		util.MustBindEnv("listObjectsPipelineNumProcs", "OPENFGA_LIST_OBJECTS_PIPELINE_NUM_PROCS", "OPENFGA_LISTOBJECTSPIPELINENUMPROCS")
 
+		util.MustBindPFlag("listObjectsPipelineMaxBatch", flags.Lookup("listObjects-pipeline-max-batch"))
+		util.MustBindEnv("listObjectsPipelineMaxBatch", "OPENFGA_LIST_OBJECTS_PIPELINE_MAX_BATCH", "OPENFGA_LISTOBJECTSPIPELINEMAXBATCH")
+
 		util.MustBindPFlag("listUsersDeadline", flags.Lookup("listUsers-deadline"))
 		util.MustBindEnv("listUsersDeadline", "OPENFGA_LIST_USERS_DEADLINE", "OPENFGA_LISTUSERSDEADLINE")
 
