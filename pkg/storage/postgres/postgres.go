@@ -111,6 +111,10 @@ func parseConfig(uri string, override bool, cfg *sqlcommon.Config) (*pgxpool.Con
 		c.PingTimeout = cfg.PingTimeout
 	}
 
+	if cfg.DetachedPing {
+		useDetachedPing(c)
+	}
+
 	c.BeforeConnect = createBeforeConnect(cfg.Logger, &FSPassfileProvider{cfg.Logger, os.UserHomeDir, FileOpener})
 	return c, nil
 }

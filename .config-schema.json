@@ -327,6 +327,12 @@
                     "default": "0s",
                     "x-env-variable": "OPENFGA_DATASTORE_CONN_MAX_LIFETIME"
                 },
+                "detachedPing": {
+                    "description": "Ping idle connections under a context the caller cannot cancel, and hand a connection back to the pool when the caller has gone, so a cancelled request cannot destroy a healthy connection. This is only available for PostgreSQL.",
+                    "type": "boolean",
+                    "default": false,
+                    "x-env-variable": "OPENFGA_DATASTORE_DETACHED_PING"
+                },
                 "metrics": {
                     "type": "object",
                     "properties": {

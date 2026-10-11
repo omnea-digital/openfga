@@ -56,6 +56,7 @@ type Config struct {
 	ConnMaxLifetime         time.Duration
 	PingTimeout             time.Duration
 	PingRetryMaxElapsedTime time.Duration
+	DetachedPing            bool
 
 	ExportMetrics bool
 }
@@ -187,6 +188,14 @@ func WithPingTimeout(d time.Duration) DatastoreOption {
 func WithPingRetryMaxElapsedTime(d time.Duration) DatastoreOption {
 	return func(cfg *Config) {
 		cfg.PingRetryMaxElapsedTime = d
+	}
+}
+
+// WithDetachedPing returns a DatastoreOption that makes the PostgreSQL pool
+// ping idle connections under a context the caller cannot cancel.
+func WithDetachedPing(enabled bool) DatastoreOption {
+	return func(cfg *Config) {
+		cfg.DetachedPing = enabled
 	}
 }
 

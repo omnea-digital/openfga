@@ -173,6 +173,11 @@ type DatastoreConfig struct {
 	// PingRetryMaxElapsedTime is the maximum time to retry datastore ping attempts.
 	PingRetryMaxElapsedTime time.Duration
 
+	// DetachedPing makes the PostgreSQL pool ping an idle connection under a context the caller
+	// cannot cancel, and hand the connection back to the pool when the caller has gone, so a
+	// cancelled caller cannot destroy a healthy connection. This is only available in Postgresql.
+	DetachedPing bool
+
 	// Metrics is configuration for the Datastore metrics.
 	Metrics DatastoreMetricsConfig
 }

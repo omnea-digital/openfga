@@ -235,6 +235,8 @@ func NewRunCommand() *cobra.Command {
 
 	flags.Duration("datastore-conn-max-lifetime", defaultConfig.Datastore.ConnMaxLifetime, "the maximum amount of time a connection to the datastore may be reused")
 
+	flags.Bool("datastore-detached-ping", defaultConfig.Datastore.DetachedPing, "ping idle PostgreSQL connections under a context the caller cannot cancel and hand them back to the pool when the caller has gone, so a cancelled request cannot destroy a healthy connection")
+
 	flags.Bool("datastore-metrics-enabled", defaultConfig.Datastore.Metrics.Enabled, "enable/disable sql metrics")
 
 	flags.Bool("playground-enabled", defaultConfig.Playground.Enabled, "enable/disable the OpenFGA Playground")
@@ -508,6 +510,7 @@ func (s *ServerContext) datastoreConfig(config *serverconfig.Config) (storage.Op
 		sqlcommon.WithConnMaxLifetime(config.Datastore.ConnMaxLifetime),
 		sqlcommon.WithPingTimeout(config.Datastore.PingTimeout),
 		sqlcommon.WithPingRetryMaxElapsedTime(config.Datastore.PingRetryMaxElapsedTime),
+		sqlcommon.WithDetachedPing(config.Datastore.DetachedPing),
 	}
 
 	if config.Datastore.Metrics.Enabled {
