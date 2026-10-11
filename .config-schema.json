@@ -94,6 +94,27 @@
             "default": true,
             "x-env-variable": "OPENFGA_LIST_OBJECTS_PIPELINE_ENABLED"
         },
+        "listObjectsPipelineChunkSize": {
+            "description": "The maximum number of ids per message between ListObjects pipeline workers, and so per datastore read.",
+            "type": "integer",
+            "minimum": 1,
+            "default": 100,
+            "x-env-variable": "OPENFGA_LIST_OBJECTS_PIPELINE_CHUNK_SIZE"
+        },
+        "listObjectsPipelineBufferCapacity": {
+            "description": "The number of messages buffered between two ListObjects pipeline workers.",
+            "type": "integer",
+            "minimum": 0,
+            "default": 128,
+            "x-env-variable": "OPENFGA_LIST_OBJECTS_PIPELINE_BUFFER_CAPACITY"
+        },
+        "listObjectsPipelineNumProcs": {
+            "description": "The number of goroutines processing each edge of the ListObjects pipeline.",
+            "type": "integer",
+            "minimum": 1,
+            "default": 3,
+            "x-env-variable": "OPENFGA_LIST_OBJECTS_PIPELINE_NUM_PROCS"
+        },
         "listUsersDeadline": {
             "description": "The timeout deadline for serving ListUsers requests. If 0s, there is no deadline",
             "type": "string",

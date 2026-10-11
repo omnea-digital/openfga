@@ -239,6 +239,15 @@ func bindRunFlagsFunc(flags *pflag.FlagSet) func(*cobra.Command, []string) {
 		util.MustBindPFlag("listObjectsPipelineEnabled", flags.Lookup("listObjects-pipeline-enabled"))
 		util.MustBindEnv("listObjectsPipelineEnabled", "OPENFGA_LIST_OBJECTS_PIPELINE_ENABLED", "OPENFGA_LISTOBJECTSPIPELINEENABLED")
 
+		util.MustBindPFlag("listObjectsPipelineChunkSize", flags.Lookup("listObjects-pipeline-chunk-size"))
+		util.MustBindEnv("listObjectsPipelineChunkSize", "OPENFGA_LIST_OBJECTS_PIPELINE_CHUNK_SIZE", "OPENFGA_LISTOBJECTSPIPELINECHUNKSIZE")
+
+		util.MustBindPFlag("listObjectsPipelineBufferCapacity", flags.Lookup("listObjects-pipeline-buffer-capacity"))
+		util.MustBindEnv("listObjectsPipelineBufferCapacity", "OPENFGA_LIST_OBJECTS_PIPELINE_BUFFER_CAPACITY", "OPENFGA_LISTOBJECTSPIPELINEBUFFERCAPACITY")
+
+		util.MustBindPFlag("listObjectsPipelineNumProcs", flags.Lookup("listObjects-pipeline-num-procs"))
+		util.MustBindEnv("listObjectsPipelineNumProcs", "OPENFGA_LIST_OBJECTS_PIPELINE_NUM_PROCS", "OPENFGA_LISTOBJECTSPIPELINENUMPROCS")
+
 		util.MustBindPFlag("listUsersDeadline", flags.Lookup("listUsers-deadline"))
 		util.MustBindEnv("listUsersDeadline", "OPENFGA_LIST_USERS_DEADLINE", "OPENFGA_LISTUSERSDEADLINE")
 

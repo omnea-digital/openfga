@@ -52,8 +52,11 @@ const (
 	DefaultListObjectsIteratorCacheMaxResults = 10000
 	DefaultListObjectsIteratorCacheTTL        = 10 * time.Second
 
-	DefaultListObjectsPipelineEnabled      = true
-	DefaultListObjectsOptimizationsEnabled = false
+	DefaultListObjectsPipelineEnabled        = true
+	DefaultListObjectsPipelineChunkSize      = 100
+	DefaultListObjectsPipelineBufferCapacity = 128
+	DefaultListObjectsPipelineNumProcs       = 3
+	DefaultListObjectsOptimizationsEnabled   = false
 
 	DefaultCacheControllerConfigEnabled = false
 	DefaultCacheControllerConfigTTL     = 10 * time.Second
@@ -382,6 +385,14 @@ type Config struct {
 	// algorithm is enabled.
 	ListObjectsPipelineEnabled bool
 
+	// ListObjectsPipelineChunkSize, ListObjectsPipelineBufferCapacity and
+	// ListObjectsPipelineNumProcs tune the ListObjects pipeline: the maximum number
+	// of ids per message (and so per datastore read), the number of messages buffered
+	// per edge, and the goroutines per edge.
+	ListObjectsPipelineChunkSize      int
+	ListObjectsPipelineBufferCapacity int
+	ListObjectsPipelineNumProcs       int
+
 	// ListUsersDeadline defines the maximum amount of time to accumulate ListUsers results
 	// before the server will respond. This is to protect the server from misuse of the
 	// ListUsers endpoints. It cannot be larger than the configured server's request timeout (RequestTimeout or HTTPConfig.UpstreamTimeout).
@@ -544,6 +555,11 @@ func (cfg *Config) VerifyServerSettings() error {
 
 	if cfg.ListUsersDeadline < 0 {
 		return errors.New("listUsersDeadline must be non-negative time duration")
+	}
+
+	if cfg.ListObjectsPipelineChunkSize < 1 || cfg.ListObjectsPipelineNumProcs < 1 ||
+		cfg.ListObjectsPipelineBufferCapacity < 0 {
+		return errors.New("listObjectsPipelineChunkSize and listObjectsPipelineNumProcs must be positive; listObjectsPipelineBufferCapacity must be non-negative")
 	}
 
 	if cfg.MaxConditionEvaluationCost < 100 {
@@ -873,6 +889,9 @@ func DefaultConfig() *Config {
 		ListObjectsDeadline:                       DefaultListObjectsDeadline,
 		ListObjectsMaxResults:                     DefaultListObjectsMaxResults,
 		ListObjectsPipelineEnabled:                DefaultListObjectsPipelineEnabled,
+		ListObjectsPipelineChunkSize:              DefaultListObjectsPipelineChunkSize,
+		ListObjectsPipelineBufferCapacity:         DefaultListObjectsPipelineBufferCapacity,
+		ListObjectsPipelineNumProcs:               DefaultListObjectsPipelineNumProcs,
 		ListUsersMaxResults:                       DefaultListUsersMaxResults,
 		ListUsersDeadline:                         DefaultListUsersDeadline,
 		ReadChangesMaxPageSize:                    DefaultReadChangesMaxPageSize,

@@ -303,6 +303,12 @@ func NewRunCommand() *cobra.Command {
 
 	flags.Bool("listObjects-pipeline-enabled", defaultConfig.ListObjectsPipelineEnabled, "enabling the ListObjects pipeline optimization algorithm, which can significantly improve the latency of ListObjects requests. When enabled, the server will attempt to resolve intermediate nodes in the ListObjects resolution tree concurrently. This optimization is most effective for workloads with large and complex authorization models, but may not suit all cases. Can be disabled if it causes increased resource usage.")
 
+	flags.Int("listObjects-pipeline-chunk-size", defaultConfig.ListObjectsPipelineChunkSize, "the maximum number of ids per message between ListObjects pipeline workers, and so per datastore read")
+
+	flags.Int("listObjects-pipeline-buffer-capacity", defaultConfig.ListObjectsPipelineBufferCapacity, "the number of messages buffered between two ListObjects pipeline workers")
+
+	flags.Int("listObjects-pipeline-num-procs", defaultConfig.ListObjectsPipelineNumProcs, "the number of goroutines processing each edge of the ListObjects pipeline")
+
 	flags.Duration("listUsers-deadline", defaultConfig.ListUsersDeadline, "the timeout deadline for serving ListUsers requests. If 0, there is no deadline")
 
 	flags.Uint32("listUsers-max-results", defaultConfig.ListUsersMaxResults, "the maximum results to return in ListUsers API responses. If 0, all results can be returned")
@@ -1073,6 +1079,9 @@ func (s *ServerContext) Run(ctx context.Context, config *serverconfig.Config) er
 		server.WithListObjectsDeadline(config.ListObjectsDeadline),
 		server.WithListObjectsMaxResults(config.ListObjectsMaxResults),
 		server.WithListObjectsPipelineEnabled(config.ListObjectsPipelineEnabled),
+		server.WithListObjectsChunkSize(config.ListObjectsPipelineChunkSize),
+		server.WithListObjectsBufferCapacity(config.ListObjectsPipelineBufferCapacity),
+		server.WithListObjectsNumProcs(config.ListObjectsPipelineNumProcs),
 		server.WithListUsersDeadline(config.ListUsersDeadline),
 		server.WithListUsersMaxResults(config.ListUsersMaxResults),
 		server.WithMaxConcurrentReadsForListObjects(config.MaxConcurrentReadsForListObjects),
